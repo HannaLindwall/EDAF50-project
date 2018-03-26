@@ -7,50 +7,24 @@
 #include <functional>
 #include <utility>
 #include <algorithm>
+#include <map>
 using std::cout;
 using std::cin;
 using std::endl;
 using std::string;
 using std::pair;
+class Inputhandler;
+typedef string (Inputhandler::*string_funct)();
+typedef void (Inputhandler::*void_funct)();
 
 class Inputhandler {
 public:
-  void enterNG(){
-    cout << "Enter name of newsgroup";
-    cin >> ng;
-    flags.push_back(42);
-  }
-  void enterNGId(){
-    cout << "Enter identification number of newsgroup";
-    cin >> ngId;
-    flags.push_back(41);
-  }
-  void enterListArticles(){
-    enterNGId();
-  }
-  void enterCreateArticle() {
-    enterNGId();
-    cout << "Enter the article title" << endl;
-    std::getline(cin, title);
-    flags.push_back(42);
-    cout << "Enter the author" << endl;
-    std::getline(cin, author);
-    flags.push_back(42);
-    cout << "Enter text, end with #";
-    string temp;
-    while(cin >> temp && temp != "#")
-      text += " " + temp;
-    flags.push_back(42);
-  }
-  void enterArticleId() {
-    enterNGId();
-    cout << "Enter the article identification number";
-    cin >> articleId;
-    flags.push_back(41);
-  }
-  void enterGetArticle() {
-    enterArticleId();
-  }
+  void enterNG();
+  void enterNGId();
+  void enterListArticles();
+  void enterCreateArticle();
+  void enterArticleId();
+  void enterGetArticle();
 
   string listNG();
   string createNG();
@@ -61,34 +35,37 @@ public:
   string getArticle();
 
   Inputhandler() {
-    input_functions[2] = enterNG;
-    input_functions[3] = enterNGId;
-    input_functions[4] = enterListArticles;
-    input_functions[5] = enterCreateArticle;
-    input_functions[6] = enterArticleId;
-    input_functions[7] = enterGetArticle;
+    input_functions[2] = &Inputhandler::enterNG;
+    input_functions[3] = &Inputhandler::enterNGId;
+    input_functions[4] = &Inputhandler::enterListArticles;
+    input_functions[5] = &Inputhandler::enterCreateArticle;
+    input_functions[6] = &Inputhandler::enterArticleId;
+    input_functions[7] = &Inputhandler::enterGetArticle;
 
-    format_functions[1] = listNG;
-    format_functions[2] = createNG;
-    format_functions[3] = deleteNG;
-    format_functions[4] = listArticles;
-    format_functions[5] = createArticle;
-    format_functions[6] = deleteArticleId;
-    format_functions[7] = getArticle;
+    format_functions[1] = &Inputhandler::listNG;
+    format_functions[2] = &Inputhandler::createNG;
+    format_functions[3] = &Inputhandler::deleteNG;
+    format_functions[4] = &Inputhandler::listArticles;
+    format_functions[5] = &Inputhandler::createArticle;
+    format_functions[6] = &Inputhandler::deleteArticle;
+    format_functions[7] = &Inputhandler::getArticle;
   }
-  
-  unsigned int action(unsigned int act) {
+
+  unsigned int perform_action(unsigned int act) {
     auto perform = input_functions.find(act);
+    cout << act << endl;
     if(perform != input_functions.end()) {
+      cout << "found " << act << endl;
       action = act;
-      input_functions[act]();
+      (this->*input_functions[act])();
     }
     if(act == 1)
-    action = act;
+      action = act;
+    cout << act << endl;
     cout << endl;
     return action;
   }
-  string getText() { return format_functions[action](); }
+  string getText() { return (this->*format_functions[action])(); }
 
 private:
   std::vector<unsigned int> flags;
@@ -99,6 +76,7 @@ private:
   string title;
   string author;
   string text;
-  std::map<std::pair<int, void()>> input_functions;
-  std::map<std::pair<int, void()>> format_functions;
-}
+  std::map<int, void_funct> input_functions;
+  std::map<int, string_funct> format_functions;
+};
+#endif

@@ -8,6 +8,7 @@
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <sstream>
 
 using namespace std;
 
@@ -22,7 +23,8 @@ void getHelp() {
 }
 void writeAction(const Connection& conn, Inputhandler& ih) {
 	string line = ih.getText();
-	isstringstream iss(line);
+  cout << line << endl;
+	istringstream iss(line);
 	unsigned char input;
 	while(iss >> input) {
 		conn.write(input);
@@ -56,7 +58,7 @@ int main(int argc, char* argv[]) {
 		cerr << "Connection attempt failed" << endl;
 		exit(1);
 	}
-  InputtHandler ih;
+  Inputhandler ih;
 	cout << "Enter a number to choose an action or enter HELP: " << endl;
 	string input;
 	while (cin >> input) {
@@ -68,13 +70,14 @@ int main(int argc, char* argv[]) {
         try {
 					//check that first input is a number
       	  act = stoi(input);
+          cout << act << endl;
 					//check that it's an action
-          unsigned int ret_act = ih.action(act);
+          unsigned int ret_act = ih.perform_action(act);
           if(ret_act != 0) {
 						//create the correct input to the server
 						writeAction(conn, ih);
 						string reply = readAction(conn);
-						cout << " " << reply << endl;
+						cout << reply << endl;
 
 
           } else {

@@ -1,24 +1,23 @@
 #include "server.h"
 #include "connection.h"
 #include "connectionclosedexception.h"
+#include "serverhandler.h"
 
 #include <memory>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <sstream>
 
 using namespace std;
 
 /*
  * Read an integer from a client.
  */
-int readNumber(const shared_ptr<Connection>& conn) {
-	unsigned char byte1 = conn->read();
-	unsigned char byte2 = conn->read();
-	unsigned char byte3 = conn->read();
-	unsigned char byte4 = conn->read();
-	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
+int readAction(const shared_ptr<Connection>& conn) {
+		unsigned char byte = conn->read();
+		return byte;
 }
 
 /*
@@ -31,17 +30,17 @@ void writeString(const shared_ptr<Connection>& conn, const string& s) {
 	conn->write('$');
 }
 
-void translateCommand(const int cmd, const string newsGroup, const articleName){
+string translateCommand(const unsigned int cmd, const shared_ptr<Connection>& conn, Serverhandler& sh){
+	cout << cmd << endl;
 	switch(cmd){
-		case 1: listNewsGroup();
-		case 2: createNewsGroup();
-		case 3:	deleteNewsGroup();
-		case 4:	listArticles(string newsGroup);
-		case 5: createArticle(string newsGroup);
-		case 6: deleteArticle(string newsGroup);
-		case 7: getArticle(string newsGroup, string articleName);
-		case 8: terminate();
-		default: cout << "Wrong input" << endl;
+		case 1: return sh.listNewsGroup(conn);
+		case 2: return sh.createNewsGroup(conn);
+		case 3:	return sh.deleteNewsGroup(conn);
+		case 4:	return sh.listArticles(conn);
+		case 5: return sh.createArticle(conn);
+		case 6: return sh.deleteArticle(conn);
+		case 7: return sh.getArticle(conn);
+		default: return "Wrong input";
 	}
 }
 
@@ -50,7 +49,7 @@ int main(int argc, char* argv[]){
 		cerr << "Usage: myserver port-number" << endl;
 		exit(1);
 	}
-	
+
 	int port = -1;
 	try {
 		port = stoi(argv[1]);
@@ -58,27 +57,25 @@ int main(int argc, char* argv[]){
 		cerr << "Wrong port number. " << e.what() << endl;
 		exit(1);
 	}
-	
+
 	Server server(port);
 	if (!server.isReady()) {
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-	
+
+	Serverhandler sh;
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
 			try {
-				int nbr = readNumber(conn);
-				string result;
-				if (nbr > 0) {
-					result = "positive";
-				} else if (nbr == 0) {
-					result = "zero";
-				} else {
-					result = "negative";
-				}
-				writeString(conn, result);
+				unsigned int action = readAction(conn) - '0';
+				sh.setAction(action);
+				string response = translateCommand(action, conn, sh);
+
+
+
+				writeString(conn, response);
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;
@@ -90,5 +87,3 @@ int main(int argc, char* argv[]){
 		}
 	}
 }
-
-

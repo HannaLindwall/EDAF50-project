@@ -10,36 +10,38 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $*.d
 # Define preprocessor, compiler, and linker flags. Uncomment the # lines
 # if you use clang++ and wish to use libc++ instead of GNU's libstdc++.
 # -g is for debugging.
-CPPFLAGS =  -std=c++11 -I.
+CPPFLAGS  = -std=c++11 -I..
 CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast
 CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 CXXFLAGS += $(DEPFLAGS)
-LDFLAGS =   -g
+LDFLAGS   = -g -L..
 #CPPFLAGS += -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
 #LDFLAGS +=  -stdlib=libc++
 
+# Libraries
+LDLIBS = -lclientserver
+
 # Targets
+PROGS = newsserver newsclient
 
-all: libclientserver.a
+all: $(PROGS)
 
-# Create the library; ranlib is for Darwin (OS X) and maybe other systems.
-# Doesn't seem to do any damage on other systems.
-
-libclientserver.a: connection.o server.o
-	ar rv libclientserver.a  connection.o server.o
-	ranlib libclientserver.a
+# Targets rely on implicit rules for compiling and linking
+# The dependency on libclientserver.a is not defined.
+newsserver: newsserver.o serverhandler.o database1.o  
+newsclient: inputhandler.o newsclient.o
 
 # Phony targets
 .PHONY: all clean distclean
 
 # Standard clean
 clean:
-	rm -f *.o
+	rm -f *.o $(PROGS)
 
 distclean: clean
-	-rm *.d libclientserver.a
+	-rm *.d
 
 
 # Include the *.d files
