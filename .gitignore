@@ -4,3 +4,6 @@
 *.a
 *.dSYM
 *.out
+
+myclient
+myserver
