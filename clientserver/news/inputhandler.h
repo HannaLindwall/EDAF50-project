@@ -60,7 +60,6 @@ public:
   string deleteArticle();
   string getArticle();
 
-
   Inputhandler() {
     input_functions[2] = enterNG;
     input_functions[3] = enterNGId;
@@ -77,6 +76,7 @@ public:
     format_functions[6] = deleteArticleId;
     format_functions[7] = getArticle;
   }
+  
   unsigned int action(unsigned int act) {
     auto perform = input_functions.find(act);
     if(perform != input_functions.end()) {
