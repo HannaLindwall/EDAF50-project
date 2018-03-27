@@ -9,13 +9,13 @@ Serverhandler::Serverhandler(Database* database) : db(database){
 
 string Serverhandler::listNewsGroup() {
   cout << "list" << endl;
-  vector<string> newsgroups = db->listNewsGroup();
   string return_string = "20 ";
-  string data = "";
-  for(string s : newsgroups){
-    data += s;
-    data += " ";
-  }
+  vector<string> newsgroups = db->listNewsGroup();
+  // string data = "";
+  // for(string s : newsgroups){
+  //   data += s;
+  //   data += " ";
+  // }
   //return_string += messageHandler.parseshit(data);
   return return_string;
 }

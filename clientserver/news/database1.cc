@@ -5,7 +5,7 @@ using namespace std;
 
 Database1::Database1(){}
 vector<string> Database1::listNewsGroup(){
-
+  return {"hej"};
 }
 void Database1::createNewsGroup(string news_group_name){}
 void Database1::deleteNewsGroup(unsigned int news_group_id){}
