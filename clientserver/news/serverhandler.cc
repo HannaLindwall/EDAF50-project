@@ -8,6 +8,7 @@ Serverhandler::Serverhandler() {}
 string Serverhandler::listNewsGroup(const shared_ptr<Connection>& conn) {
   cout << "list" << endl;
   //just to read the eight
+
   conn->read();
   return "test";
 }

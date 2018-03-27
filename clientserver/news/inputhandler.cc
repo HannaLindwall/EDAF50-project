@@ -13,12 +13,12 @@ using namespace std;
 
 
 void Inputhandler::enterNG(){
-  cout << "Enter name of newsgroup";
+  cout << "Enter name of newsgroup" << endl;
   cin >> ng;
   flags.push_back(42);
 }
 void Inputhandler::enterNGId(){
-  cout << "Enter identification number of newsgroup";
+  cout << "Enter identification number of newsgroup"<< endl;
   cin >> ngId;
   flags.push_back(41);
 }
@@ -41,7 +41,7 @@ void Inputhandler::enterCreateArticle() {
 }
 void Inputhandler::enterArticleId() {
   enterNGId();
-  cout << "Enter the article identification number";
+  cout << "Enter the article identification number"<< endl;
   cin >> articleId;
   flags.push_back(41);
 }

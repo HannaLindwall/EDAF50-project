@@ -1,5 +1,5 @@
 #ifndef DATABASE1_H
-#define DATABASE1_H 
+#define DATABASE1_H
 
 #include <tuple>
 #include <map>
@@ -19,8 +19,8 @@ public:
 	void deleteArticle(string newsGroupName);
 	string getArticle(string newsGroupName, string articleName);
 private:
-	vector<pair<int, string>> newsGroups;
-	vector<tuple<int, int, string, string, string>> articles;
-	int groupIndex;
+	set<string> newsGroups;
+	map<int, vector<Article>> articles;
+
 };
 #endif
