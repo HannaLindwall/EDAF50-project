@@ -3,43 +3,43 @@
 #include "serverhandler.h"
 //unsigned char input = static_cast<unsigned char>(Protocol::ANS_ACK);
 
-Serverhandler::Serverhandler(Database& database) : db(database){
+Serverhandler::Serverhandler(Database* database) : db(database){
 
 }
 
-string Serverhandler::listNewsGroup(const shared_ptr<Connection>& conn) {
+string Serverhandler::listNewsGroup() {
   cout << "list" << endl;
-  vector<string> newsgroups = db.listNewsGroup();
+  vector<string> newsgroups = db->listNewsGroup();
   string return_string = "20 ";
   string data = "";
   for(string s : newsgroups){
     data += s;
     data += " ";
   }
-  return_string += messageHandler.parseshit(data);
+  //return_string += messageHandler.parseshit(data);
   return return_string;
 }
-string Serverhandler::createNewsGroup(const shared_ptr<Connection>& conn){
+string Serverhandler::createNewsGroup(){
   cout << "CNG" << endl;
   return "test";
 }
-string Serverhandler::deleteNewsGroup(const shared_ptr<Connection>& conn){
+string Serverhandler::deleteNewsGroup(){
   cout << "DNG" << endl;
   return "test";
 }
-string Serverhandler::listArticles(const shared_ptr<Connection>& conn){
+string Serverhandler::listArticles(){
   cout << "ListA" << endl;
   return "test";
 }
-string Serverhandler::createArticle(const shared_ptr<Connection>& conn){
+string Serverhandler::createArticle(){
   cout << "CA" << endl;
   return "test";
 }
-string Serverhandler::deleteArticle(const shared_ptr<Connection>& conn){
+string Serverhandler::deleteArticle(){
   cout << "DA" << endl;
   return "test";
 }
-string Serverhandler::getArticle(const shared_ptr<Connection>& conn){
+string Serverhandler::getArticle(){
   cout << "GA" << endl;
   return "test";
 }

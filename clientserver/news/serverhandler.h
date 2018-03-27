@@ -12,14 +12,14 @@ using namespace std;
 
 class Serverhandler {
 public:
-  Serverhandler(Database& db);
-  string listNewsGroup(const shared_ptr<Connection>& conn);
-  string createNewsGroup(const shared_ptr<Connection>& conn);
-  string deleteNewsGroup(const shared_ptr<Connection>& conn);
-  string listArticles(const shared_ptr<Connection>& conn);
-  string createArticle(const shared_ptr<Connection>& conn);
-  string deleteArticle(const shared_ptr<Connection>& conn);
-  string getArticle(const shared_ptr<Connection>& conn);
+  Serverhandler(Database* db);
+  string listNewsGroup();
+  string createNewsGroup();
+  string deleteNewsGroup();
+  string listArticles();
+  string createArticle();
+  string deleteArticle();
+  string getArticle();
   void setAction(unsigned int a) { action = a; cout << "action:" << action << endl;}
 
 private:
