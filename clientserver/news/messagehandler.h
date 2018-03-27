@@ -5,9 +5,6 @@
 class MessageHandler {
 public:
   MessageHandler(Connection& c) : conn(c) {}
-  sendByte
-  sendCode
-
 private:
   Connection conn;
 

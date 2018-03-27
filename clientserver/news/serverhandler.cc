@@ -3,7 +3,9 @@
 #include "serverhandler.h"
 //unsigned char input = static_cast<unsigned char>(Protocol::ANS_ACK);
 
-Serverhandler::Serverhandler() {}
+Serverhandler::Serverhandler(Database& database) : db(database){
+
+}
 
 string Serverhandler::listNewsGroup(const shared_ptr<Connection>& conn) {
   cout << "list" << endl;

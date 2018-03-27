@@ -12,7 +12,7 @@ using namespace std;
 
 class Serverhandler {
 public:
-  Serverhandler();
+  Serverhandler(Database& db);
   string listNewsGroup(const shared_ptr<Connection>& conn);
   string createNewsGroup(const shared_ptr<Connection>& conn);
   string deleteNewsGroup(const shared_ptr<Connection>& conn);
@@ -23,6 +23,7 @@ public:
   void setAction(unsigned int a) { action = a; cout << "action:" << action << endl;}
 
 private:
-  Database db;
+  Database* db;
+  unsigned int action;
 };
 #endif

@@ -5,11 +5,14 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
+#include "database.h"
+#include "article.h"
 using namespace std;
 
 class Database1 : public Database{
 public:
-	virtual Database1();
+	Database1();
 	virtual vector<string> listNewsGroup();
 	virtual void createNewsGroup(string news_group_name);
 	virtual void deleteNewsGroup(unsigned int news_group_id);

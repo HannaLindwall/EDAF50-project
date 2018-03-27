@@ -1,4 +1,6 @@
+#include <string>
 using std::string;
+
 
 class Article{
 public:
@@ -11,6 +13,6 @@ public:
 private:
   unsigned int id_nbr;
   string title;
-  sting author;
+  string author;
   string text;
-}
+};

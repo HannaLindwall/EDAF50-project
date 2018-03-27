@@ -2,6 +2,8 @@
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "serverhandler.h"
+#include "database1.h"
+#include "database.h"
 
 #include <memory>
 #include <iostream>
@@ -63,8 +65,8 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-
-	Serverhandler sh;
+	Database database = new Database1();
+	Serverhandler sh(database);
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
