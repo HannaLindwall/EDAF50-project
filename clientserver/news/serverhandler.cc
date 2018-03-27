@@ -1,5 +1,5 @@
 #include "protocol.h"
-#include "database1.h"
+#include "database.h"
 #include "serverhandler.h"
 //unsigned char input = static_cast<unsigned char>(Protocol::ANS_ACK);
 
@@ -7,10 +7,15 @@ Serverhandler::Serverhandler() {}
 
 string Serverhandler::listNewsGroup(const shared_ptr<Connection>& conn) {
   cout << "list" << endl;
-  //just to read the eight
-
-  conn->read();
-  return "test";
+  vector<string> newsgroups = db.listNewsGroup();
+  string return_string = "20 ";
+  string data = "";
+  for(string s : newsgroups){
+    data += s;
+    data += " ";
+  }
+  return_string += messageHandler.parseshit(data);
+  return return_string;
 }
 string Serverhandler::createNewsGroup(const shared_ptr<Connection>& conn){
   cout << "CNG" << endl;

@@ -2,13 +2,10 @@
 #define SERVERHANDLER_H
 #include "connection.h"
 #include "connectionclosedexception.h"
-#include "database1.h"
+#include "database.h"
 #include <iostream>
 #include <string>
 #include <vector>
-#include <functional>
-#include <utility>
-#include <algorithm>
 #include <memory>
 #include <cstdlib>
 using namespace std;
@@ -26,13 +23,6 @@ public:
   void setAction(unsigned int a) { action = a; cout << "action:" << action << endl;}
 
 private:
-  unsigned int action;
-  unsigned int ngId;
-  unsigned int articleId;
-  string ng;
-  string title;
-  string author;
-  string text;
-  Database1 db1;
+  Database db;
 };
 #endif

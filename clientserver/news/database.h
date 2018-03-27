@@ -9,7 +9,7 @@ using namespace std;
 
 class Database{
 public:
-	virtual Database db(){}
+  virtual ~Database(){}
 	virtual vector<string> listNewsGroup() = 0;
 	virtual void createNewsGroup(string news_group_name) = 0;
 	virtual void deleteNewsGroup(unsigned int news_group_id) = 0;
