@@ -41,5 +41,7 @@ string Serverhandler::deleteArticle(){
 }
 string Serverhandler::getArticle(){
   cout << "GA" << endl;
-  return "test";
+  string return_string = db->getArticle(1 , 1);
+  return return_string;
+
 }
