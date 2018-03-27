@@ -1,5 +1,9 @@
 #include "messagehandler.h"
 
+MessageHandler::MessageHandler(std::shared_ptr<Connection>& c) : conn(c) {}
+
+MessageHandler::MessageHandler(Connection& c) : conn(&c) {}
+
 void MessageHandler::sendByte(unsigned char code){
   conn->write(code);
 }

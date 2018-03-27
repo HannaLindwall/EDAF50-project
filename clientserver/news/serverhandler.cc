@@ -1,9 +1,8 @@
 #include "protocol.h"
-#include "database.h"
 #include "serverhandler.h"
 //unsigned char input = static_cast<unsigned char>(Protocol::ANS_ACK);
 
-Serverhandler::Serverhandler(Database* database) : db(database){
+Serverhandler::Serverhandler(Database* database, MessageHandler& messagehandler) : db(database), mh(messagehandler){
 
 }
 

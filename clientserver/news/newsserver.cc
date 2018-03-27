@@ -4,6 +4,7 @@
 #include "serverhandler.h"
 #include "database1.h"
 #include "database.h"
+#include "messagehandler.h"
 
 #include <memory>
 #include <iostream>
@@ -65,13 +66,14 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-	Database* database = new Database1();
-	Serverhandler sh(database);
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
+			Database* database = new Database1();
+			MessageHandler mh(conn);
+			Serverhandler sh(database, mh);
 			try {
-				unsigned int action = readAction(conn) - '0';
+				unsigned int action = readAction(conn);
 				sh.setAction(action);
 				string response = translateCommand(action, sh);
 

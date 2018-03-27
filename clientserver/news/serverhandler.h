@@ -3,6 +3,7 @@
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "database.h"
+#include "messagehandler.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -12,7 +13,7 @@ using namespace std;
 
 class Serverhandler {
 public:
-  Serverhandler(Database* db);
+  Serverhandler(Database* db, MessageHandler& mh);
   string listNewsGroup();
   string createNewsGroup();
   string deleteNewsGroup();
@@ -24,6 +25,7 @@ public:
 
 private:
   Database* db;
+  MessageHandler mh;
   unsigned int action;
 };
 #endif

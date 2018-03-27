@@ -1,4 +1,9 @@
+#ifndef MESSAGEHANDLER_H
+#define MESSAGEHANDLER_H
+
 #include <string>
+#include <memory>
+#include <cstdlib>
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "protocol.h"
@@ -6,7 +11,8 @@ using std::string;
 
 class MessageHandler {
 public:
-  MessageHandler(Connection& c) : conn(&c) {}
+  MessageHandler(std::shared_ptr<Connection>& c);
+  MessageHandler(Connection& c);
   void sendByte(unsigned char code);
   void sendCode(Protocol p);
   void sendInt(int value);
@@ -18,6 +24,7 @@ public:
   int recvIntParameter();
   string recvStringParameter();
 private:
-  Connection* conn;
+  std::shared_ptr<Connection> conn;
 
 };
+#endif

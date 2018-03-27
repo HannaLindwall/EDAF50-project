@@ -3,6 +3,7 @@
 #include "connectionclosedexception.h"
 #include "protocol.h"
 #include "inputhandler.h"
+#include "messagehandler.h"
 
 #include <iostream>
 #include <string>
@@ -20,15 +21,6 @@ void getHelp() {
   cout << "5 = create article" << endl;
   cout << "6 = delete article" << endl;
   cout << "7 = get article" << endl;
-}
-void writeAction(const Connection& conn, Inputhandler& ih) {
-	string line = ih.getText();
-  cout << line << endl;
-	istringstream iss(line);
-	unsigned char input;
-	while(iss >> input) {
-		conn.write(input);
-	}
 }
 string readAction(const Connection& conn) {
 	string s;
@@ -58,7 +50,8 @@ int main(int argc, char* argv[]) {
 		cerr << "Connection attempt failed" << endl;
 		exit(1);
 	}
-  Inputhandler ih;
+  MessageHandler mh(conn);
+  Inputhandler ih(mh);
 	cout << "Enter a number to choose an action or enter HELP: " << endl;
 	string input;
 	while (cin >> input) {
@@ -75,7 +68,7 @@ int main(int argc, char* argv[]) {
           unsigned int ret_act = ih.perform_action(act);
           if(ret_act != 0) {
 						//create the correct input to the server
-						writeAction(conn, ih);
+						ih.sendParameters();
 						string reply = readAction(conn);
 						cout << reply << endl;
 

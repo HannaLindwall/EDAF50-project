@@ -8,13 +8,14 @@
 #include <utility>
 #include <algorithm>
 #include <map>
+#include "messagehandler.h"
+#include "protocol.h"
 using std::cout;
 using std::cin;
 using std::endl;
 using std::string;
 using std::pair;
 class Inputhandler;
-typedef string (Inputhandler::*string_funct)();
 typedef void (Inputhandler::*void_funct)();
 
 class Inputhandler {
@@ -26,15 +27,15 @@ public:
   void enterArticleId();
   void enterGetArticle();
 
-  string listNG();
-  string createNG();
-  string deleteNG();
-  string listArticles();
-  string createArticle();
-  string deleteArticle();
-  string getArticle();
+  void listNG();
+  void createNG();
+  void deleteNG();
+  void listArticles();
+  void createArticle();
+  void deleteArticle();
+  void getArticle();
 
-  Inputhandler() {
+  Inputhandler(MessageHandler messagehandler) : mh(messagehandler) {
     input_functions[2] = &Inputhandler::enterNG;
     input_functions[3] = &Inputhandler::enterNGId;
     input_functions[4] = &Inputhandler::enterListArticles;
@@ -65,7 +66,7 @@ public:
     cout << endl;
     return action;
   }
-  string getText() { return (this->*format_functions[action])(); }
+  void sendParameters() { (this->*format_functions[action])(); mh.sendCode(Protocol::COM_END);}
 
 private:
   std::vector<unsigned int> flags;
@@ -77,6 +78,10 @@ private:
   string author;
   string text;
   std::map<int, void_funct> input_functions;
-  std::map<int, string_funct> format_functions;
+  std::map<int, void_funct> format_functions;
+  MessageHandler mh;
+  string build(string s);
+  void sendInt(unsigned int i);
+  void sendString(string s);
 };
 #endif
