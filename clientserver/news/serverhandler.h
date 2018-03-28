@@ -14,13 +14,13 @@ using namespace std;
 class Serverhandler {
 public:
   Serverhandler(Database* db, MessageHandler& mh);
-  string listNewsGroup();
-  string createNewsGroup();
-  string deleteNewsGroup();
-  string listArticles();
-  string createArticle();
-  string deleteArticle();
-  string getArticle();
+  void listNewsGroups();
+  void createNewsGroup();
+  void deleteNewsGroup();
+  void listArticles();
+  void createArticle();
+  void deleteArticle();
+  void getArticle();
   void setAction(unsigned int a) { action = a; cout << "action:" << action << endl;}
 
 private:

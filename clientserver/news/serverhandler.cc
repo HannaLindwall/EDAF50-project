@@ -5,42 +5,41 @@
 Serverhandler::Serverhandler(Database* database, MessageHandler& messagehandler) : db(database), mh(messagehandler){
 
 }
-
-string Serverhandler::listNewsGroup() {
+// ANS_LIST_NG num_p [num_p string_p]* ANS_END
+void Serverhandler::listNewsGroups() {
   cout << "list" << endl;
-  string return_string = "20 ";
+  mh.recvCode();
+  mh.sendCode(Protocol::ANS_LIST_NG);
   vector<string> newsgroups = db->listNewsGroup();
-  // string data = "";
-  // for(string s : newsgroups){
-  //   data += s;
-  //   data += " ";
-  // }
-  //return_string += messageHandler.parseshit(data);
-  return return_string;
+  mh.sendIntParameter(newsgroups.size());
+  for(string ng : newsgroups) {
+    mh.sendIntParameter(ng.length());
+    mh.sendStringParameter(ng);
+  }
+  mh.sendCode(Protocol::ANS_END);
 }
-string Serverhandler::createNewsGroup(){
+// ANS_CREATE_NG [ANS_ACK | ANS_NAK ERR_NG_ALREADY_EXISTS] ANS_END
+void Serverhandler::createNewsGroup(){
   cout << "CNG" << endl;
-  return "test";
 }
-string Serverhandler::deleteNewsGroup(){
+// ANS_DELETE_NG [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+void Serverhandler::deleteNewsGroup(){
   cout << "DNG" << endl;
-  return "test";
 }
-string Serverhandler::listArticles(){
+// ANS_LIST_ART [ANS_ACK num_p [num_p string_p]* | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+void Serverhandler::listArticles(){
   cout << "ListA" << endl;
-  return "test";
 }
-string Serverhandler::createArticle(){
+// ANS_CREATE_ART [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+void Serverhandler::createArticle(){
   cout << "CA" << endl;
-  return "test";
 }
-string Serverhandler::deleteArticle(){
+// ANS_DELETE_ART [ANS_ACK | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
+void Serverhandler::deleteArticle(){
   cout << "DA" << endl;
-  return "test";
 }
-string Serverhandler::getArticle(){
+// ANS_DELETE_ART [ANS_ACK | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
+void Serverhandler::getArticle(){
   cout << "GA" << endl;
   string return_string = db->getArticle(1 , 1);
-  return return_string;
-
 }
