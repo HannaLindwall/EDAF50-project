@@ -11,12 +11,12 @@ string Serverhandler::listNewsGroup() {
   cout << "list" << endl;
   string return_string = "20 ";
   vector<string> newsgroups = db->listNewsGroup();
-  // string data = "";
-  // for(string s : newsgroups){
-  //   data += s;
-  //   data += " ";
-  // }
-  //return_string += messageHandler.parseshit(data);
+  string data = "";
+  for(string s : newsgroups){
+    data += s;
+    data += "_";
+  }
+  // return_string += messageHandler.parseshit(data);
   return return_string;
 }
 string Serverhandler::createNewsGroup(){
