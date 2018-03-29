@@ -4,10 +4,11 @@
 #include <string>
 #include <memory>
 #include <cstdlib>
+#include <iostream>
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "protocol.h"
-using std::string;
+using namespace std;
 
 class MessageHandler {
 public:
@@ -15,7 +16,7 @@ public:
   MessageHandler(Connection& c);
   void sendByte(unsigned char code);
   void sendCode(Protocol p);
-  void sendInt(int value);
+  void sendInt(unsigned int value);
   void sendIntParameter(int param);
   void sendStringParameter(string param);
   int recvByte();
