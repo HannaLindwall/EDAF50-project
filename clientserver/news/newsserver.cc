@@ -4,6 +4,7 @@
 #include "serverhandler.h"
 #include "database1.h"
 #include "database.h"
+#include "messagehandler.h"
 
 #include <memory>
 #include <iostream>
@@ -35,14 +36,14 @@ void writeString(const shared_ptr<Connection>& conn, const string& s) {
 string translateCommand(const unsigned int cmd, Serverhandler& sh){
 	cout << cmd << endl;
 	switch(cmd){
-		case 1: return sh.listNewsGroup();
-		case 2: return sh.createNewsGroup();
-		case 3:	return sh.deleteNewsGroup();
-		case 4:	return sh.listArticles();
-		case 5: return sh.createArticle();
-		case 6: return sh.deleteArticle();
-		case 7: return sh.getArticle();
-		default: return "Wrong input";
+		case 1: sh.listNewsGroups();
+		case 2: sh.createNewsGroup();
+		case 3:	sh.deleteNewsGroup();
+		case 4:	sh.listArticles();
+		case 5: sh.createArticle();
+		case 6: sh.deleteArticle();
+		case 7: sh.getArticle();
+		default: cout << "Wrong input" << endl;
 	}
 }
 
@@ -65,13 +66,14 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-	Database* database = new Database1();
-	Serverhandler sh(database);
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
+			Database* database = new Database1();
+			MessageHandler mh(conn);
+			Serverhandler sh(database, mh);
 			try {
-				unsigned int action = readAction(conn) - '0';
+				unsigned int action = readAction(conn);
 				sh.setAction(action);
 				string response = translateCommand(action, sh);
 

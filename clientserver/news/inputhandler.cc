@@ -11,7 +11,6 @@ using namespace std;
 //string_p: PAR_STRING N char1 char2 ... charN // N is the number of characters
 //num_p: PAR_NUM N // N is the number
 
-
 void Inputhandler::enterNG(){
   cout << "Enter name of newsgroup" << endl;
   cin >> ng;
@@ -49,106 +48,74 @@ void Inputhandler::enterGetArticle() {
   enterArticleId();
 }
 
-// COM_END
-string Inputhandler::listNG() {
-  cout << "list" << endl;
-  string input = to_string(action);
-  input += " 8";
+string Inputhandler::build(string in) {
+  string input;
+  for(char c : in) {
+    input += " ";
+    if(c == ' ') {
+      input += "_";
+    } else {
+      input += c;
+    }
+  }
   return input;
+}
+
+// COM_END
+void Inputhandler::listNG() {
+  cout << "list" << endl;
+  mh.sendCode(Protocol::COM_LIST_NG);
+}
+void Inputhandler::sendString(string in) {
+  string input = build(in);
+  mh.sendStringParameter(input);
+}
+
+void Inputhandler::sendInt(unsigned int in) {
+  mh.sendIntParameter(in);
 }
 // string_p COM_END
-string Inputhandler::createNG() {
+void Inputhandler::createNG() {
+  mh.sendCode(Protocol::COM_CREATE_NG);
   cout << "CNG" << endl;
-  string input = to_string(action);
-  input += " " + to_string(flags[0]);
-  input += " " + to_string(ng.length());
-  for(char c : ng) {
-    input += " ";
-    if(c == ' ') {
-      input += "_";
-    } else {
-      input += c;
-    }
-  }
-  input += " 8";
-  return input;
-
+  sendString(ng);
 }
 // num_p COM_END
-string Inputhandler::deleteNG() {
+void Inputhandler::deleteNG() {
+  mh.sendCode(Protocol::COM_DELETE_NG);
   cout << "DNG" << endl;
-  string input = to_string(action);
-  input += " " + to_string(flags[0]);
-  input += " " + to_string(ngId);
-  input += " 8";
-  return input;
-
+  sendInt(ngId);
 }
 // num_p COM_END
-string Inputhandler::listArticles() {
+void Inputhandler::listArticles() {
+  mh.sendCode(Protocol::COM_LIST_ART);
   cout << "listA" << endl;
-  return deleteNG();
-
+  sendInt(ngId);
 }
 // num_p string_p string_p string_p COM_END
-string Inputhandler::createArticle() {
+void Inputhandler::createArticle() {
+  mh.sendCode(Protocol::COM_CREATE_ART);
   cout << "CA" << endl;
-  //action
-  string input = to_string(action);
   //NGId
-  input += " " + to_string(flags[0]);
-  input += " " + to_string(ngId);
+  sendInt(ngId);
   //title
-  input += " " + to_string(flags[1]);
-  input += " " + to_string(title.length());
-  for(char c : ng) {
-    input += " ";
-    if(c == ' ') {
-      input += "_";
-    } else {
-      input += c;
-    }
-  }
+  sendString(title);
   //author
-  input += " " + to_string(flags[2]);
-  input += " " + to_string(author.length());
-  for(char c : author) {
-    input += " ";
-    if(c == ' ') {
-      input += "_";
-    } else {
-      input += c;
-    }
-  }
+  sendString(author);
   //text
-  input += " " + to_string(flags[3]);
-  input += " " + to_string(text.length());
-  for(char c : ng) {
-    input += " ";
-    if(c == ' ') {
-      input += "_";
-    } else {
-      input += c;
-    }
-  }
-  input += " 8";
-  return input;
+  sendString(text);
 }
 //  num_p num_p COM_END
-string Inputhandler::deleteArticle() {
+void Inputhandler::deleteArticle() {
+  mh.sendCode(Protocol::COM_DELETE_ART);
   cout << "DA" << endl;
-  string input = to_string(action);
-  input += " " + to_string(flags[0]);
-  input += " " + to_string(ngId);
-  input += " " + to_string(flags[1]);
-  input += " " + to_string(articleId);
-  input += " 8";
-  return input;
-
+  sendInt(ngId);
+  sendInt(articleId);
 }
 // num_p num_p COM_END
-string Inputhandler::getArticle() {
-  cout << "GA" << endl;
-  return deleteArticle();
-
+void Inputhandler::getArticle() {
+  mh.sendCode(Protocol::COM_GET_ART);
+  cout << "GA" << ngId << endl;
+  sendInt(ngId);
+  sendInt(articleId);
 }

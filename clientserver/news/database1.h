@@ -1,7 +1,6 @@
 #ifndef DATABASE1_H
 #define DATABASE1_H
 
-#include <set>
 #include <map>
 #include <string>
 #include <utility>
@@ -21,7 +20,7 @@ public:
 	virtual void deleteArticle(unsigned int news_group_id, unsigned int article_id);
 	virtual string getArticle(unsigned int news_group_id, unsigned int article_id);
 private:
-	set<string> newsGroups;
+	vector<string> newsGroups;
 	map<int, vector<Article>> articles;
 
 };
