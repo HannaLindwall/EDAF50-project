@@ -13,7 +13,7 @@ class Database1 : public Database{
 public:
 	Database1();
 	virtual vector<string> listNewsGroup();
-	virtual void createNewsGroup(string news_group_name);
+	virtual bool createNewsGroup(string news_group_name);
 	virtual void deleteNewsGroup(unsigned int news_group_id);
 	virtual vector<string> listArticles(unsigned int news_group_id);
 	virtual void createArticle(unsigned int news_group_id, string title, string author, string text);

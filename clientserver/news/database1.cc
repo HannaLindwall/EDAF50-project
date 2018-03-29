@@ -2,6 +2,7 @@
 #include "article.h"
 #include <string>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 Database1::Database1(){}
@@ -9,8 +10,18 @@ vector<string> Database1::listNewsGroup(){
   return newsGroups;
 }
 
-void Database1::createNewsGroup(string news_group_name){ //Borde troligen returnera om vi lyckas eller ej
-  newsGroups.push_back(news_group_name);				 //Alltså, om den fanns i vectorn eller ej
+bool Database1::createNewsGroup(string news_group_name){
+  bool b;
+  if(find(newsGroups.begin(), newsGroups.end(), news_group_name) ! = newsGroups.end()){
+  	b = true;
+  } else {
+  	b = false;
+  }
+  if(b){
+  	newsGroups.push_back(news_group_name);
+  	return true;
+  }
+  return false;
 }
 
 void Database1::deleteNewsGroup(unsigned int news_group_id){
