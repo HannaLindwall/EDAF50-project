@@ -1,5 +1,6 @@
 #include "database1.h"
 #include "article.h"
+#include "notexsistindbexception.h"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -26,10 +27,17 @@ bool Database1::createNewsGroup(string news_group_name){
 }
 
 void Database1::deleteNewsGroup(unsigned int news_group_id){
-  newsGroups.erase(newsGroups.begin()+(news_group_id-1));
+  if(news_group_id >= newsGroups.size()){
+    throw NotExsistInDatabaseException();
+    return;
+  }
+    newsGroups.erase(newsGroups.begin()+(news_group_id-1));
 }
 
 vector<string> Database1::listArticles(unsigned int news_group_id){
+  if(news_group_id >= newsGroups.size()){
+    throw NotExsistInDatabaseException();
+  }
   vector<Article> v = articles[news_group_id];
   vector<string> returnv;
   for(Article a : v){
@@ -39,6 +47,10 @@ vector<string> Database1::listArticles(unsigned int news_group_id){
 }
 
 void Database1::createArticle(unsigned int news_group_id, string title, string author, string text){
+  if(news_group_id >= newsGroups.size()){
+    throw NotExsistInDatabaseException();
+    return;
+  }
   articles[news_group_id].emplace_back(title, author, text);
 }
 
