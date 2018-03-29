@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 using namespace std;
 
 Database1::Database1(){}
@@ -12,7 +13,7 @@ vector<string> Database1::listNewsGroup(){
 
 bool Database1::createNewsGroup(string news_group_name){
   bool b;
-  if(find(newsGroups.begin(), newsGroups.end(), news_group_name) ! = newsGroups.end()){
+  if(find(newsGroups.begin(), newsGroups.end(), news_group_name) != newsGroups.end()){
   	b = true;
   } else {
   	b = false;

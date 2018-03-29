@@ -26,14 +26,15 @@ void Serverhandler::createNewsGroup(){
   cout << "CNG" << endl;
   mh.recvCode();
   string group_name = mh.recvStringParameter();
-  db->createNewsGroup(group_name); // Denna måste returnera en bool för
+  bool succes = db->createNewsGroup(group_name); // Denna måste returnera en bool för
   //Skicka tillbaka ACK eller NACK
-  // mh.sendCode(Protocol::ANS_CREATE_NG);
-  // //if success sendCode ANS_ACK
-  //   mh.sendCode(Protocol::ANS_ACK);
-  // //else sendCode ANS_NAK ERR_NG_ALREADY_EXISTS
-  //   mh.sendCode(Protocol::ERR_NG_ALREADY_EXISTS);
-  // mh.sendCode(Protocol::ANS_END);
+  mh.sendCode(Protocol::ANS_CREATE_NG);
+  if(success){
+    mh.sendCode(Protocol::ANS_ACK);
+  }else{
+    mh.sendCode(Protocol::ERR_NG_ALREADY_EXISTS);
+  }
+  mh.sendCode(Protocol::ANS_END);
 }
 // ANS_DELETE_NG [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
 void Serverhandler::deleteNewsGroup(){
@@ -52,7 +53,7 @@ void Serverhandler::listArticles(){
 void Serverhandler::createArticle(){
   cout << "CA" << endl;
   mh.recvCode();
-  mh.
+
 }
 // ANS_DELETE_ART [ANS_ACK | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
 void Serverhandler::deleteArticle(){
@@ -60,7 +61,7 @@ void Serverhandler::deleteArticle(){
   mh.recvCode();
   unsigned int group_id = mh.recvIntParameter();
   unsigned int article_id = mh.recvIntParameter();
-  db->deleteNewsGroup(group_id, article_id);
+  db->deleteArticle(group_id, article_id);
 }
 // ANS_DELETE_ART [ANS_ACK | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
 void Serverhandler::getArticle(){
