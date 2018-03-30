@@ -5,6 +5,7 @@
 #include "newsgroupalreadyexistexception.h"
 #include <string>
 #include <tuple>
+#include <algorithm>
 
 using std::string;
 //unsigned char input = static_cast<unsigned char>(Protocol::ANS_ACK);
@@ -17,12 +18,12 @@ void Serverhandler::listNewsGroups() {
   cout << "list" << endl;
   mh.sendCode(Protocol::ANS_LIST_NG);
   mh.recvCode();
-  vector<string> newsgroups = db->listNewsGroup();
+  map<unsigned int, string> newsgroups = db->listNewsGroup();
   mh.sendIntParameter(newsgroups.size());
-  for(unsigned int i = 0; i < newsgroups.size(); ++i) {
-    mh.sendIntParameter(i);
-    mh.sendStringParameter(newsgroups[i]);
-  }
+  for_each(newsgroups.begin(), newsgroups.end(),
+        [&](const pair<unsigned int, string>& p) {
+            mh.sendIntParameter(p.first);
+            mh.sendStringParameter(p.second);});
   mh.sendCode(Protocol::ANS_END);
 }
 // ANS_CREATE_NG [ANS_ACK | ANS_NAK ERR_NG_ALREADY_EXISTS] ANS_END
@@ -63,18 +64,20 @@ void Serverhandler::deleteNewsGroup(){
 void Serverhandler::listArticles(){
   cout << "ListA" << endl;
   unsigned int group_id = mh.recvIntParameter();
+  cout << "id " << group_id << endl;
   mh.recvCode();
   mh.sendCode(Protocol::ANS_LIST_ART);
   try{
-    vector<string> titles =  db->listArticles(group_id);
+    vector<pair<unsigned int, string>> titles =  db->listArticles(group_id);
     mh.sendCode(Protocol::ANS_ACK);
-    for(string t : titles) {
-      mh.sendIntParameter(t.length());
-      mh.sendStringParameter(t);
+    mh.sendIntParameter(titles.size());
+    for(auto p : titles) {
+      mh.sendIntParameter(p.first);
+      mh.sendStringParameter(p.second);
     }
-    }catch(const NewsGroupDoesNotExistException& e){
-      mh.sendCode(Protocol::ANS_NAK);
-      mh.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+  } catch(const NewsGroupDoesNotExistException& e){
+    mh.sendCode(Protocol::ANS_NAK);
+    mh.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
   }
   mh.sendCode(Protocol::ANS_END);
 }
@@ -85,6 +88,7 @@ void Serverhandler::createArticle(){
   string title = mh.recvStringParameter();
   string author = mh.recvStringParameter();
   string text = mh.recvStringParameter();
+  cout << text << endl;
   mh.recvCode();
   mh.sendCode(Protocol::ANS_CREATE_ART);
   try{
@@ -129,8 +133,8 @@ void Serverhandler::getArticle(){
   try{
     auto article_info = db->getArticle(group_id, article_id);
     string title = get<0>(article_info);
-    string author = get<0>(article_info);
-    string text = get<0>(article_info);
+    string author = get<1>(article_info);
+    string text = get<2>(article_info);
     mh.sendCode(Protocol::ANS_ACK);
     mh.sendStringParameter(title);
     mh.sendStringParameter(author);

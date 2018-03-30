@@ -27,7 +27,6 @@ string readAction(const Connection& conn) {
 	char ch;
 	while ((ch = conn.read()) != '$') {
 		s += ch;
-    cout << ch << endl;
 	}
 
 	return s;
