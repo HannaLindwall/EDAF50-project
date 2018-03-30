@@ -9,6 +9,7 @@
 #include <iterator>
 #include <tuple>
 #include <exception>
+#include <iostream>
 using namespace std;
 
 Database1::Database1(){}

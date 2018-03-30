@@ -51,7 +51,6 @@ int MessageHandler::recvIntParameter() {
 }
 string MessageHandler::recvStringParameter() {
   unsigned int code = recvCode();
-
   unsigned int n = recvInt();
 
   string result;

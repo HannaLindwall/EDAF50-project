@@ -33,16 +33,16 @@ void writeString(const shared_ptr<Connection>& conn, const string& s) {
 	conn->write('$');
 }
 
-string translateCommand(const unsigned int cmd, Serverhandler& sh){
-	cout << cmd << endl;
-	switch(cmd){
-		case 1: sh.listNewsGroups();
-		case 2: sh.createNewsGroup();
-		case 3:	sh.deleteNewsGroup();
-		case 4:	sh.listArticles();
-		case 5: sh.createArticle();
-		case 6: sh.deleteArticle();
-		case 7: sh.getArticle();
+void translateCommand(const int p, Serverhandler& sh){
+	cout << p << endl;
+	switch(p){
+		case 1: sh.listNewsGroups(); break;
+		case 2: sh.createNewsGroup(); break;
+		case 3:	sh.deleteNewsGroup(); break;
+		case 4:	sh.listArticles(); break;
+		case 5: sh.createArticle(); break;
+		case 6: sh.deleteArticle(); break;
+		case 7: sh.getArticle(); break;
 		default: cout << "Wrong input" << endl;
 	}
 }
@@ -66,20 +66,22 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
+	Database* database = new Database1();
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
-			Database* database = new Database1();
 			MessageHandler mh(conn);
 			Serverhandler sh(database, mh);
 			try {
-				unsigned int action = readAction(conn);
+				int action = mh.recvCode();
 				sh.setAction(action);
-				string response = translateCommand(action, sh);
+				translateCommand(action, sh);
+				// cout << "sent" << endl;
+				// mh.recvCode();
+				cout << "sent2" << endl;
+				conn->write('$');
 
-
-
-				writeString(conn, response);
+				//writeString(conn, response);
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;

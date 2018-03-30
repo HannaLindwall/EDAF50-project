@@ -15,21 +15,19 @@ Serverhandler::Serverhandler(Database* database, MessageHandler& messagehandler)
 // ANS_LIST_NG num_p [num_p string_p]* ANS_END
 void Serverhandler::listNewsGroups() {
   cout << "list" << endl;
-  mh.recvCode();
   mh.sendCode(Protocol::ANS_LIST_NG);
   mh.recvCode();
   vector<string> newsgroups = db->listNewsGroup();
   mh.sendIntParameter(newsgroups.size());
-  for(string ng : newsgroups) {
-    mh.sendIntParameter(ng.length());
-    mh.sendStringParameter(ng);
+  for(unsigned int i = 0; i < newsgroups.size(); ++i) {
+    mh.sendIntParameter(i);
+    mh.sendStringParameter(newsgroups[i]);
   }
   mh.sendCode(Protocol::ANS_END);
 }
 // ANS_CREATE_NG [ANS_ACK | ANS_NAK ERR_NG_ALREADY_EXISTS] ANS_END
 void Serverhandler::createNewsGroup(){
   cout << "CNG" << endl;
-  mh.recvCode();
   string group_name = mh.recvStringParameter();
   mh.recvCode();
   mh.sendCode(Protocol::ANS_CREATE_NG);
@@ -40,13 +38,13 @@ void Serverhandler::createNewsGroup(){
     mh.sendCode(Protocol::ANS_NAK);
     mh.sendCode(Protocol::ERR_NG_ALREADY_EXISTS);
   }
+  cout << "gn" << group_name << endl;
   mh.sendCode(Protocol::ANS_END);
 }
 
 // ANS_DELETE_NG [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
 void Serverhandler::deleteNewsGroup(){
   cout << "DNG" << endl;
-  mh.recvCode();
   unsigned int group_id = mh.recvIntParameter();
   mh.recvCode();
   mh.sendCode(Protocol::ANS_DELETE_NG);
@@ -60,12 +58,10 @@ void Serverhandler::deleteNewsGroup(){
 
   mh.sendCode(Protocol::ANS_END);
 
-
 }
 // ANS_LIST_ART [ANS_ACK num_p [num_p string_p]* | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
 void Serverhandler::listArticles(){
   cout << "ListA" << endl;
-  mh.recvCode();
   unsigned int group_id = mh.recvIntParameter();
   mh.recvCode();
   mh.sendCode(Protocol::ANS_LIST_ART);
@@ -85,7 +81,6 @@ void Serverhandler::listArticles(){
 // ANS_CREATE_ART [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
 void Serverhandler::createArticle(){
   cout << "CA" << endl;
-  mh.recvCode();
   unsigned int group_id = mh.recvIntParameter();
   string title = mh.recvStringParameter();
   string author = mh.recvStringParameter();
@@ -106,7 +101,6 @@ void Serverhandler::createArticle(){
 // ANS_DELETE_ART [ANS_ACK | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
 void Serverhandler::deleteArticle(){
   cout << "DA" << endl;
-  mh.recvCode();
   unsigned int group_id = mh.recvIntParameter();
   unsigned int article_id = mh.recvIntParameter();
   mh.recvCode();
@@ -128,7 +122,6 @@ void Serverhandler::deleteArticle(){
 //ANS_GET_ART [ANS_ACK string_p string_p string_p | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
 void Serverhandler::getArticle(){
   cout << "GA" << endl;
-  mh.recvCode();
   unsigned int group_id = mh.recvIntParameter();
   unsigned int article_id = mh.recvIntParameter();
   mh.recvCode();

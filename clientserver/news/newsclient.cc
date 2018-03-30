@@ -27,7 +27,9 @@ string readAction(const Connection& conn) {
 	char ch;
 	while ((ch = conn.read()) != '$') {
 		s += ch;
+    cout << ch << endl;
 	}
+
 	return s;
 }
 
@@ -63,15 +65,16 @@ int main(int argc, char* argv[]) {
         try {
 					//check that first input is a number
       	  act = stoi(input);
-          cout << act << endl;
 					//check that it's an action
           unsigned int ret_act = ih.perform_action(act);
           if(ret_act != 0) {
 						//create the correct input to the server
 						ih.sendParameters();
+            cout << "sent" << endl;
 						string reply = readAction(conn);
-						cout << reply << endl;
-
+            cout << "reply " << reply << endl;
+            reply = ih.translateReply(reply);
+            cout << reply << endl;
 
           } else {
             cout << "Command could not be found" << endl;
