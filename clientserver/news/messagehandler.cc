@@ -9,8 +9,9 @@ void MessageHandler::sendByte(unsigned char code){
   conn->write(code);
 }
 void MessageHandler::sendCode(Protocol p) {
-  sendInt(static_cast<unsigned int>(p));
+  sendByte(static_cast<unsigned int>(p));
 }
+
 void MessageHandler::sendInt(unsigned int value) {
   cout << value << endl;
   sendByte((value >> 24) & 0xFF);
@@ -29,13 +30,13 @@ void MessageHandler::sendStringParameter(string param) {
     sendByte(param[i]);
   }
 }
-int MessageHandler::recvByte() {
+unsigned char MessageHandler::recvByte() {
   unsigned char code = conn->read();
   return code;
 }
-int MessageHandler::recvCode() {
-  unsigned char code = recvInt();
-  return code;
+Protocol MessageHandler::recvCode() {
+  unsigned char code = recvByte();
+  return static_cast<Protocol>(code);
 }
 int MessageHandler::recvInt() {
   unsigned char b1 = recvByte();
@@ -46,17 +47,25 @@ int MessageHandler::recvInt() {
 }
 
 int MessageHandler::recvIntParameter() {
-  unsigned int code = recvCode();
+  Protocol code = recvCode();
+  if (code != Protocol::PAR_NUM) {
+    throw ConnectionClosedException();
+  }
   return recvInt();
 }
 string MessageHandler::recvStringParameter() {
-  unsigned int code = recvCode();
-  unsigned int n = recvInt();
-
-  string result;
-  for (unsigned int i = 1; i <= n; i++) {
-    unsigned char ch = conn->read();
-    result += ch;
-  }
+  Protocol code = recvCode();
+    if (code != Protocol::PAR_STRING) {
+      throw ConnectionClosedException();
+    }
+    int n = recvInt();
+    if (n < 0) {
+      throw ConnectionClosedException();
+    }
+    string result;
+    for (int i = 1; i <= n; i++) {
+      unsigned char ch = conn->read();
+      result += ch;
+    }
   return result;
 }

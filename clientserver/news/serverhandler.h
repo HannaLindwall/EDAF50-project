@@ -25,7 +25,7 @@ public:
 
 private:
   Database* db;
-  MessageHandler mh;
+  MessageHandler* mh;
   unsigned int action;
 };
 #endif

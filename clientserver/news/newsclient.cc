@@ -28,7 +28,6 @@ string readAction(const Connection& conn) {
 	while ((ch = conn.read()) != '$') {
 		s += ch;
 	}
-
 	return s;
 }
 
@@ -69,18 +68,20 @@ int main(int argc, char* argv[]) {
           if(ret_act != 0) {
 						//create the correct input to the server
 						ih.sendParameters();
-            cout << "sent" << endl;
-						string reply = readAction(conn);
-            cout << "reply " << reply << endl;
-            reply = ih.translateReply(reply);
+            //cout << "sent" << endl;
+						string reply = ih.readParameters();
             cout << reply << endl;
+            //ANS_END
+            mh.recvCode();
+            //cout << "reply " << reply << endl;
+            //reply = ih.translateReply(reply);
 
           } else {
             cout << "Command could not be found" << endl;
           }
 
         } catch (exception& e) {
-      		cerr << "Invalid input" << endl;
+      		cerr << "Invalid input h" << endl;
       	}
       }
       cout << "Enter a number to choose an action or enter HELP" << endl;

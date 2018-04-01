@@ -33,16 +33,15 @@ void writeString(const shared_ptr<Connection>& conn, const string& s) {
 	conn->write('$');
 }
 
-void translateCommand(const int p, Serverhandler& sh){
-	cout << p << endl;
+void translateCommand(const Protocol p, Serverhandler& sh){
 	switch(p){
-		case 1: sh.listNewsGroups(); break;
-		case 2: sh.createNewsGroup(); break;
-		case 3:	sh.deleteNewsGroup(); break;
-		case 4:	sh.listArticles(); break;
-		case 5: sh.createArticle(); break;
-		case 6: sh.deleteArticle(); break;
-		case 7: sh.getArticle(); break;
+		case Protocol::COM_LIST_NG: sh.listNewsGroups(); break;
+		case Protocol::COM_CREATE_NG: sh.createNewsGroup(); break;
+		case Protocol::COM_DELETE_NG:	sh.deleteNewsGroup(); break;
+		case Protocol::COM_LIST_ART:	sh.listArticles(); break;
+		case Protocol::COM_CREATE_ART: sh.createArticle(); break;
+		case Protocol::COM_DELETE_ART: sh.deleteArticle(); break;
+		case Protocol::COM_GET_ART: sh.getArticle(); break;
 		default: cout << "Wrong input" << endl;
 	}
 }
@@ -63,7 +62,7 @@ int main(int argc, char* argv[]){
 
 	Server server(port);
 	if (!server.isReady()) {
-		cerr << "Server initialization error." << endl;
+		cerr << "Server initializaation error." << endl;
 		exit(1);
 	}
 	Database* database = new Database1();
@@ -73,14 +72,15 @@ int main(int argc, char* argv[]){
 			MessageHandler mh(conn);
 			Serverhandler sh(database, mh);
 			try {
-				int action = mh.recvCode();
-				sh.setAction(action);
+				Protocol action = mh.recvCode();
+				sh.setAction(static_cast<unsigned int>(action));
 				translateCommand(action, sh);
+				//end
+				if(mh.recvCode() != Protocol::COM_END) {
+          throw ConnectionClosedException();
+        }
 				// cout << "sent" << endl;
-				// mh.recvCode();
 				cout << "sent2" << endl;
-				conn->write('$');
-
 				//writeString(conn, response);
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);

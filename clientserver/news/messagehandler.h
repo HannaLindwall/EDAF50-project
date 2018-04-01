@@ -19,8 +19,8 @@ public:
   void sendInt(unsigned int value);
   void sendIntParameter(int param);
   void sendStringParameter(string param);
-  int recvByte();
-  int recvCode();
+  unsigned char recvByte();
+  Protocol recvCode();
   int recvInt();
   int recvIntParameter();
   string recvStringParameter();

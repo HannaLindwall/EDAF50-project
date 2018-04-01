@@ -66,7 +66,7 @@ void Database1::deleteArticle(unsigned int news_group_id, unsigned int article_i
       throw NewsGroupDoesNotExistException();
   }
   auto it2 = remove_if(articles[news_group_id].begin(), articles[news_group_id].end(), [&article_id] (const Article& a) { return a.getId() == article_id; });
-  if (it1 == newsGroups.end()) {
+  if (it2 == articles[news_group_id].end()) {
       throw ArticleDoesNotExistException();
   }
   articles[news_group_id].erase(it2);
@@ -78,11 +78,10 @@ tuple<string, string, string> Database1::getArticle(unsigned int news_group_id, 
       throw NewsGroupDoesNotExistException();
   }
   vector<Article> v = articles[news_group_id];
-  try{
-    auto article_info = make_tuple(v[article_id].getTitle(), v[article_id].getAuthor(), v[article_id].getArticleText());
-    return article_info;
-  }catch(exception& e){
-    throw ArticleDoesNotExistException();
+  auto it2 = find_if(articles[news_group_id].begin(), articles[news_group_id].end(), [&article_id] (const Article& a) { return a.getId() == article_id; });
+  if (it2 == articles[news_group_id].end()) {
+      throw ArticleDoesNotExistException();
   }
-
+  auto article_info = make_tuple(it2->getTitle(), it2->getAuthor(), it2->getArticleText());
+  return article_info;
 }

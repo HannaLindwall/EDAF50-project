@@ -117,291 +117,141 @@ void Inputhandler::getArticle() {
   sendInt(ngId);
   sendInt(articleId);
 }
-
-void Inputhandler::readEmpty(istream& iss) {
-  unsigned char c;
-  iss >> c;
-  iss >> c;
-  iss >> c;
-}
-
-string Inputhandler::translateListNG(string reply) {
-  cout << "list" << endl;
-  unsigned char r;
-  string ngs;
-  istringstream iss(reply);
-  //20
-  readEmpty(iss);
-  iss >> r;
-  //41
-  readEmpty(iss);
-  iss >> r;
-  //nbrNG
-  readEmpty(iss);
-  iss >> r;
-  unsigned int nbrNG = r;
-  cout << "nbr " << nbrNG << endl;
-  //no newsgroups
-  if(nbrNG == 0) {
-    return "No newsgroups added";
+// ANS_LIST_NG num_p [num_p string_p]* ANS_END
+string Inputhandler::readListNG(MessageHandler& mh) {
+  mh.recvCode();
+  unsigned int nbrNG = mh.recvIntParameter();
+  if(nbrNG==0) {
+    return "No newsgroups created yet.";
   }
-  for(unsigned int i = 0 ; i < nbrNG ; ++i) {
-    //string reading
-    readEmpty(iss);
-    iss >> r;
-    //id
-    readEmpty(iss);
-    iss >> r;
-    unsigned int id = r;
-    ngs += to_string(id) + " ";
-    readEmpty(iss);
-    iss >> r;
-    readEmpty(iss);
-    iss >> r;
-    unsigned int length = r;
-    cout << "1 " << length << endl;
-    //word starting
-    for(unsigned int k = 0; k < length; ++k) {
-      iss >> r;
-      if(r == '_') {
-        ngs += " ";
-      } else {
-        ngs += r;
-      }
-    }
-    if(i < nbrNG - 1) {
-      ngs += "\n";
+  string output = "List of all newsgroups:";
+  for(unsigned int i = 0; i < nbrNG; ++i) {
+    output += "\n";
+    unsigned int id = mh.recvIntParameter();
+    output += to_string(id) + " ";
+    string ngName = mh.recvStringParameter();
+    output += ngName;
+  }
+  return output;
+}
+// ANS_CREATE_NG [ANS_ACK | ANS_NAK ERR_NG_ALREADY_EXISTS] ANS_END
+string Inputhandler::readCreateNG(MessageHandler& mh) {
+  mh.recvCode();
+  string output = "Newsgroup: " + ng;
+  if(mh.recvCode()==Protocol::ANS_ACK) {
+    output += " was successfully created.";
+  } else {
+    output += " could not be created.";
+    if(mh.recvCode()==Protocol::ERR_NG_ALREADY_EXISTS) {
+      output += " The newsgroup might already exist, try another name.";
     }
   }
-  //27
-  readEmpty(iss);
-  iss >> r;
-  return ngs;
-}
-string Inputhandler::translateCreateNG(string reply) {
-  cout << "CNG" << endl;
-  unsigned char r;
-  string resp = ng + " was";
-  istringstream iss(reply);
-  //readEmpty(iss);
-  //21
-  readEmpty(iss);
-  iss >> r;
-  cout << "4" << r << endl;
-  readEmpty(iss);
-  iss >> r;
-  unsigned int code = r;
-  cout << "5" << code << endl;
-  if (code == static_cast<unsigned int>(Protocol::ANS_ACK)) {
-    resp += " successfully added";
-  } else {
-    resp += " not added, it might already exist, try to list all newsgroups";
-  }
-  //27
-  readEmpty(iss);
-  iss >> r;
-  return resp;
-}
-string Inputhandler::translateDeleteNG(string reply) {
-  cout << "DNG" << endl;
-  unsigned char r;
-  string resp = to_string(ngId) + " was";
-  istringstream iss(reply);
-  //22
-  readEmpty(iss);
-  iss >> r;
-  cout << "1 " << r << endl;
-  //ACK or NACK
-  readEmpty(iss);
-  iss >> r;
-  unsigned int code = r;
-  cout << "2 " << code << endl;
-  if (code == static_cast<unsigned int>(Protocol::ANS_ACK)) {
-    resp += " successfully deleted";
-  } else {
-    resp += " not added, newsgroup might not exist, try to list all newsgroups to check id";
-  }
-  //27
-  readEmpty(iss);
-  iss >> r;
-  return resp;
-}
+  return output;
 
-string Inputhandler::translateListArticles(string reply) {
-  cout << "LA" << endl;
-  cout << reply << endl;
-  unsigned char r;
-  string resp = "Articles in newsgroup: " + to_string(ngId) + "\n";
-  istringstream iss(reply);
-  //23
-  readEmpty(iss);
-  iss >> r;
-  cout << "1 " << r << endl;
-  //ACK or NACK
-  readEmpty(iss);
-  iss >> r;
-  unsigned int code = r;
-  cout << "2 " << code << endl;
-  if (code == static_cast<unsigned int>(Protocol::ANS_ACK)) {
-    //41
-    readEmpty(iss);
-    iss >> r;
-    readEmpty(iss);
-    iss >> r;
-    unsigned int nbrArticles = r;
-    cout << "nbrA " << nbrArticles << endl;
-    if(nbrArticles == 0) {
-      return ("No articles with newsgroupID: " + to_string(ngId));
+}
+// ANS_DELETE_NG [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+string Inputhandler::readDeleteNG(MessageHandler& mh) {
+  mh.recvCode();
+  string output = "Newsgroup: " + to_string(ngId);
+  if(mh.recvCode()==Protocol::ANS_ACK) {
+    output += " was successfully deleted.";
+  } else {
+    output += " could not be deleted.";
+    if(mh.recvCode()==Protocol::ERR_NG_DOES_NOT_EXIST) {
+      output += " The newsgroup might not exist, try listing all newsgroups.";
     }
-    for( unsigned int i = 0; i < nbrArticles; ++i) {
-      //string reading
-      readEmpty(iss);
-      iss >> r;
-      //id
-      readEmpty(iss);
-      iss >> r;
-      unsigned int id = r;
-      resp += to_string(id) + " ";
-      readEmpty(iss);
-      iss >> r;
-      readEmpty(iss);
-      iss >> r;
-      unsigned int length = r;
-      cout << "1 " << length << endl;
-      //word starting
-      for(unsigned int k = 0; k < length; ++k) {
-        iss >> r;
-        if(r == '_') {
-          resp += " ";
-        } else {
-          resp += r;
-        }
-      }
-      if(i < nbrArticles - 1) {
-        resp += "\n";
-      }
-    }
-  } else {
-    resp = "Could not find newsgroup, try to list all newsgroups to check id";
   }
-  //27
-  readEmpty(iss);
-  iss >> r;
-  return resp;
+  return output;
 }
-
-string Inputhandler::translateCreateArticle(string reply) {
-  cout << "CA" << endl;
-  unsigned char r;
-  string resp = title + " was";
-  istringstream iss(reply);
-  //24
-  readEmpty(iss);
-  iss >> r;
-  cout << "1 " << r << endl;
-  //ACK or NACK
-  readEmpty(iss);
-  iss >> r;
-  unsigned int code = r;
-  cout << "2 " << code << endl;
-  if (code == static_cast<unsigned int>(Protocol::ANS_ACK)) {
-    resp += " successfully created";
-  } else {
-    resp += " not created, newsgroup might not exist, try to list all newsgroups to check id";
-  }
-  //27
-  readEmpty(iss);
-  iss >> r;
-  return resp;
-}
-
-string Inputhandler::translateDeleteArticle(string reply) {
-  cout << "DA" << endl;
-  unsigned char r;
-  string resp = to_string(articleId) + " was";
-  istringstream iss(reply);
-  //25
-  readEmpty(iss);
-  iss >> r;
-  cout << "1 " << r << endl;
-  //ACK or NACK
-  readEmpty(iss);
-  iss >> r;
-  unsigned int code = r;
-  cout << "2 " << code << endl;
-  if (code == static_cast<unsigned int>(Protocol::ANS_ACK)) {
-    resp += " successfully deleted";
-  } else {
-    resp += " not created,";
-    //no ng or no art
-    readEmpty(iss);
-    iss >> r;
-    code = r;
-    cout << "3 " << code << endl;
-    if (code == static_cast<unsigned int>(Protocol::ERR_NG_DOES_NOT_EXIST)) {
-      resp += " newsgroup might not exist, try to list all newsgroups to check id";
+// ANS_LIST_ART [ANS_ACK num_p [num_p string_p]* | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+string Inputhandler::readListArticles(MessageHandler& mh) {
+  mh.recvCode();
+  string output = "Newsgroup: " + to_string(ngId);
+  if(mh.recvCode()==Protocol::ANS_ACK) {
+    unsigned int nbrArt = mh.recvIntParameter();
+    if(nbrArt==0) {
+      output += " has no articles added to it yet.";
     } else {
-      resp += " article might not exist, try to list all articles in newsgroup to check id";
+      for(unsigned int i = 0; i < nbrArt; ++i) {
+        output += "\n";
+        unsigned int id = mh.recvIntParameter();
+        output += to_string(id) + " ";
+        string art = mh.recvStringParameter();
+        output += art;
+      }
+    }
+  } else {
+    if(mh.recvCode()==Protocol::ERR_NG_DOES_NOT_EXIST) {
+      output += " might not exist, try listing all newsgroups.";
     }
   }
-  //27
-  readEmpty(iss);
-  iss >> r;
-  return resp;
+  return output;
 }
-
-string Inputhandler::translateGetArticle(string reply) {
-  cout << "GA" << endl;
-  unsigned char r;
-  string resp = "Article " + to_string(articleId) + " was";
-  istringstream iss(reply);
-  //26
-  readEmpty(iss);
-  iss >> r;
-  cout << "1 " << r << endl;
-  //ACK or NACK
-  readEmpty(iss);
-  iss >> r;
-  unsigned int code = r;
-  cout << "2 " << code << endl;
-  if (code == static_cast<unsigned int>(Protocol::ANS_ACK)) {
-    resp += " found \n";
+// ANS_CREATE_ART [ANS_ACK | ANS_NAK ERR_NG_DOES_NOT_EXIST] ANS_END
+string Inputhandler::readCreateArticle(MessageHandler& mh) {
+  mh.recvCode();
+  string output = "Article: " + title;
+  if(mh.recvCode()==Protocol::ANS_ACK) {
+    output += " was successfully added to newsgroup: " + to_string(ngId);
+  } else {
+    output += " could not be created.";
+    if(mh.recvCode()==Protocol::ERR_NG_DOES_NOT_EXIST) {
+      output += " The newsgroup might not exist, try listing all newsgroups.";
+    }
+  }
+  return output;
+}
+// ANS_DELETE_ART [ANS_ACK | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
+string Inputhandler::readDeleteArticle(MessageHandler& mh) {
+  mh.recvCode();
+  string output = "Article: " + to_string(articleId);
+  if(mh.recvCode()==Protocol::ANS_ACK) {
+    output += " was successfully deleted from newsgroup: " + to_string(ngId);
+  } else {
+    output += " could not be deleted.";
+    if(mh.recvCode()==Protocol::ERR_NG_DOES_NOT_EXIST) {
+      output += " The newsgroup might not exist, try listing all newsgroups.";
+    }
+    if(mh.recvCode()==Protocol::ERR_ART_DOES_NOT_EXIST) {
+      output += " The article might not exist, try listing all articles in newsgoup: " + to_string(ngId);
+    }
+  }
+  return output;
+}
+//ANS_GET_ART [ANS_ACK string_p string_p string_p | ANS_NAK [ERR_NG_DOES_NOT_EXIST | ERR_ART_DOES_NOT_EXIST]] ANS_END
+string Inputhandler::readGetArticle(MessageHandler& mh) {
+  mh.recvCode();
+  string output = "Article: " + to_string(articleId);
+  if(mh.recvCode()==Protocol::ANS_ACK) {
     for( unsigned int i = 0; i < 3; ++i) {
-      //string reading
-      readEmpty(iss);
-      iss >> r;
-      readEmpty(iss);
-      iss >> r;
-      unsigned int length = r;
-      cout << "3 " << length << endl;
-      //word starting
-      for(unsigned int k = 0; k < length; ++k) {
-        iss >> r;
-        if(r == '_' && k != length - 1) {
-          resp += " ";
-        } else if(r != '_') {
-          resp += r;
-        }
-      }
-      if(i < 2) {
-        resp += "\n";
-      }
+      output += "\n";
+      string op = mh.recvStringParameter();
+      op = readText(op);
+      output += op;
     }
   } else {
-    resp += " not found,";
-    //no ng or no art
-    readEmpty(iss);
-    iss >> r;
-    code = r;
-    cout << "3 " << code << endl;
-    if (code == static_cast<unsigned int>(Protocol::ERR_NG_DOES_NOT_EXIST)) {
-      resp += " newsgroup might not exist, try to list all newsgroups to check id";
-    } else {
-      resp += " article might not exist, try to list all articles in newsgroup to check id";
+    output += " could not be found.";
+    if(mh.recvCode()==Protocol::ERR_NG_DOES_NOT_EXIST) {
+      output += " The newsgroup might not exist, try listing all newsgroups.";
+    }
+    if(mh.recvCode()==Protocol::ERR_ART_DOES_NOT_EXIST) {
+      output += " The article might not exist, try listing all articles in newsgoup: " + to_string(ngId);
     }
   }
-  //27
-  readEmpty(iss);
+  return output;
+}
+
+///translate
+
+string Inputhandler::readText(string op) {
+  string input;
+  istringstream iss(op);
+  unsigned char r;
   iss >> r;
-  return resp;
+  if(r == '_') {
+    input += " ";
+  } else {
+    input += r;
+  }
+  return input;
 }

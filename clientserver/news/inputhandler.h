@@ -17,6 +17,7 @@ using std::string;
 using std::pair;
 class Inputhandler;
 typedef void (Inputhandler::*void_funct)();
+typedef string (Inputhandler::*mh_funct)(MessageHandler&);
 typedef string (Inputhandler::*string_funct)(string);
 
 class Inputhandler {
@@ -36,13 +37,14 @@ public:
   void deleteArticle();
   void getArticle();
 
-  string translateListNG(string reply);
-  string translateCreateNG(string reply);
-  string translateDeleteNG(string reply);
-  string translateListArticles(string reply);
-  string translateCreateArticle(string reply);
-  string translateDeleteArticle(string reply);
-  string translateGetArticle(string reply);
+  string readListNG(MessageHandler& mh);
+  string readCreateNG(MessageHandler& mh);
+  string readDeleteNG(MessageHandler& mh);
+  string readListArticles(MessageHandler& mh);
+  string readCreateArticle(MessageHandler& mh);
+  string readDeleteArticle(MessageHandler& mh);
+  string readGetArticle(MessageHandler& mh);
+
 
   Inputhandler(MessageHandler messagehandler) : mh(messagehandler) {
     input_functions[2] = &Inputhandler::enterNG;
@@ -60,13 +62,14 @@ public:
     format_functions[6] = &Inputhandler::deleteArticle;
     format_functions[7] = &Inputhandler::getArticle;
 
-    translate_functions[1] = &Inputhandler::translateListNG;
-    translate_functions[2] = &Inputhandler::translateCreateNG;
-    translate_functions[3] = &Inputhandler::translateDeleteNG;
-    translate_functions[4] = &Inputhandler::translateListArticles;
-    translate_functions[5] = &Inputhandler::translateCreateArticle;
-    translate_functions[6] = &Inputhandler::translateDeleteArticle;
-    translate_functions[7] = &Inputhandler::translateGetArticle;
+    read_functions[1] = &Inputhandler::readListNG;
+    read_functions[2] = &Inputhandler::readCreateNG;
+    read_functions[3] = &Inputhandler::readDeleteNG;
+    read_functions[4] = &Inputhandler::readListArticles;
+    read_functions[5] = &Inputhandler::readCreateArticle;
+    read_functions[6] = &Inputhandler::readDeleteArticle;
+    read_functions[7] = &Inputhandler::readGetArticle;
+
   }
 
   unsigned int perform_action(unsigned int act) {
@@ -82,10 +85,8 @@ public:
     return action;
   }
   void sendParameters() { (this->*format_functions[action])(); mh.sendCode(Protocol::COM_END);}
+  string readParameters() { return (this->*read_functions[action])(mh); }
 
-  string translateReply(string reply) {
-    return (this->*translate_functions[action])(reply);
-  }
 
 private:
   std::vector<unsigned int> flags;
@@ -98,11 +99,12 @@ private:
   string text;
   std::map<int, void_funct> input_functions;
   std::map<int, void_funct> format_functions;
+  std::map<int, mh_funct> read_functions;
   std::map<int, string_funct> translate_functions;
   MessageHandler mh;
   string build(string s);
   void sendInt(unsigned int i);
   void sendString(string s);
-  void readEmpty(istream& iss);
+  string readText(string s);
 };
 #endif
