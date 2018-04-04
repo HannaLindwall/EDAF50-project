@@ -105,6 +105,7 @@ private:
   string build(string s);
   void sendInt(unsigned int i);
   void sendString(string s);
-  string readText(string s);
+  string readText(string s
+  );
 };
 #endif

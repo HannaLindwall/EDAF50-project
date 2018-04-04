@@ -1,7 +1,7 @@
 #include "database1.h"
 #include "article.h"
 #include "newsgroupdoesnotexistexception.h"
-#include "atricledoesnotexistexception.h"
+#include "articledoesnotexistexception.h"
 #include "newsgroupalreadyexistexception.h"
 #include <string>
 #include <vector>

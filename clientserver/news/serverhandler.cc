@@ -1,7 +1,7 @@
 #include "protocol.h"
 #include "serverhandler.h"
 #include "newsgroupdoesnotexistexception.h"
-#include "atricledoesnotexistexception.h"
+#include "articledoesnotexistexception.h"
 #include "newsgroupalreadyexistexception.h"
 #include <string>
 #include <tuple>

@@ -30,7 +30,7 @@ all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
 # The dependency on libclientserver.a is not defined.
-newsserver: newsserver.o messagehandler.o serverhandler.o database1.o article.o
+newsserver: newsserver.o messagehandler.o serverhandler.o database1.o database2.o article.o
 newsclient: inputhandler.o newsclient.o messagehandler.o
 
 # Phony targets

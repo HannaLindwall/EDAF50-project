@@ -48,14 +48,11 @@ string Inputhandler::build(string in) {
   string input;
   for(char c : in) {
     if(c == ' ') {
-      cout << "space" << endl;
       input += "_";
     } else {
-      cout << c << endl;
       input += c;
     }
   }
-  cout << input << endl;
   return input;
 }
 
@@ -213,7 +210,7 @@ string Inputhandler::readDeleteArticle(MessageHandler& mh) {
       output += " The newsgroup might not exist, try listing all newsgroups.";
     }
     if(mh.recvCode()==Protocol::ERR_ART_DOES_NOT_EXIST) {
-      output += " The article might not exist, try listing all articles in newsgoup: " + to_string(ngId);
+      output += " The article might not exist, try listing all articles in newsgroup: " + to_string(ngId);
     }
   }
   return output;
@@ -235,7 +232,7 @@ string Inputhandler::readGetArticle(MessageHandler& mh) {
       output += " The newsgroup might not exist, try listing all newsgroups.";
     }
     if(mh.recvCode()==Protocol::ERR_ART_DOES_NOT_EXIST) {
-      output += " The article might not exist, try listing all articles in newsgoup: " + to_string(ngId);
+      output += " The article might not exist, try listing all articles in newsgroup: " + to_string(ngId);
     }
   }
   return output;

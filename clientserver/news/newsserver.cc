@@ -3,6 +3,7 @@
 #include "connectionclosedexception.h"
 #include "serverhandler.h"
 #include "database1.h"
+#include "database2.h"
 #include "database.h"
 #include "messagehandler.h"
 
@@ -47,8 +48,8 @@ void translateCommand(const Protocol p, Serverhandler& sh){
 }
 
 int main(int argc, char* argv[]){
-	if (argc != 2) {
-		cerr << "Usage: myserver port-number" << endl;
+	if (argc != 3) {
+		cerr << "Usage: newsserver port-number database: 1 or 2" << endl;
 		exit(1);
 	}
 
@@ -59,13 +60,27 @@ int main(int argc, char* argv[]){
 		cerr << "Wrong port number. " << e.what() << endl;
 		exit(1);
 	}
+	int db = -1;
+	try {
+		db = stoi(argv[2]);
+	} catch (exception& e) {
+		cerr << "Invalid database. " << e.what() << endl;
+		exit(1);
+	}
 
 	Server server(port);
 	if (!server.isReady()) {
 		cerr << "Server initializaation error." << endl;
 		exit(1);
 	}
-	Database* database = new Database1();
+	Database* database;
+	if(db == 1) {
+		cout << "db1" << endl;
+		database = new Database1();
+	} else {
+		cout << "db2" << endl;
+		database = new Database2();
+	}
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {

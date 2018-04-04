@@ -33,7 +33,7 @@ string readAction(const Connection& conn) {
 
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
-		cerr << "Usage: myclient host-name port-number" << endl;
+		cerr << "Usage: newsclient host-name port-number" << endl;
 		exit(1);
 	}
 
