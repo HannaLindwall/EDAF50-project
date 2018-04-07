@@ -6,7 +6,6 @@
 #include <utility>
 #include <vector>
 #include "database.h"
-#include "article.h"
 using namespace std;
 
 class Database2 : public Database{
@@ -20,12 +19,11 @@ public:
 	virtual void deleteArticle(unsigned int news_group_id, unsigned int article_id);
 	virtual tuple<string, string, string> getArticle(unsigned int news_group_id, unsigned int article_id);
 private:
-	map<unsigned int, string> newsGroups;
-	map<unsigned int, vector<Article>> articles;
 	unsigned int ngId;
 	unsigned int articleId;
   bool newsgroup_exist(istream& ng, string comp);
   void increaseNGId();
   void increaseArticleId();
+	void removeNG(unsigned int ngId);
 };
 #endif

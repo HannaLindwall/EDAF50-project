@@ -16,23 +16,6 @@
 
 using namespace std;
 
-/*
- * Read an integer from a client.
- */
-int readAction(const shared_ptr<Connection>& conn) {
-		unsigned char byte = conn->read();
-		return byte;
-}
-
-/*
- * Send a string to a client.
- */
-void writeString(const shared_ptr<Connection>& conn, const string& s) {
-	for (char c : s) {
-		conn->write(c);
-	}
-	conn->write('$');
-}
 
 void translateCommand(const Protocol p, Serverhandler& sh){
 	switch(p){
@@ -75,10 +58,8 @@ int main(int argc, char* argv[]){
 	}
 	Database* database;
 	if(db == 1) {
-		cout << "db1" << endl;
 		database = new Database1();
 	} else {
-		cout << "db2" << endl;
 		database = new Database2();
 	}
 	while (true) {
@@ -94,9 +75,6 @@ int main(int argc, char* argv[]){
 				if(mh.recvCode() != Protocol::COM_END) {
           throw ConnectionClosedException();
         }
-				// cout << "sent" << endl;
-				cout << "sent2" << endl;
-				//writeString(conn, response);
 			} catch (ConnectionClosedException&) {
 				server.deregisterConnection(conn);
 				cout << "Client closed connection" << endl;

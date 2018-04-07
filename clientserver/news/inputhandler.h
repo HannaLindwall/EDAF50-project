@@ -1,7 +1,6 @@
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include <functional>
@@ -75,7 +74,6 @@ public:
   unsigned int perform_action(unsigned int act) {
     auto perform = input_functions.find(act);
     if(perform != input_functions.end()) {
-      cout << "found " << act << endl;
       action = act;
       (this->*input_functions[act])();
     }
@@ -100,7 +98,6 @@ private:
   std::map<int, void_funct> input_functions;
   std::map<int, void_funct> format_functions;
   std::map<int, mh_funct> read_functions;
-  std::map<int, string_funct> translate_functions;
   MessageHandler mh;
   string build(string s);
   void sendInt(unsigned int i);

@@ -22,14 +22,6 @@ void getHelp() {
   cout << "6 = delete article" << endl;
   cout << "7 = get article" << endl;
 }
-string readAction(const Connection& conn) {
-	string s;
-	char ch;
-	while ((ch = conn.read()) != '$') {
-		s += ch;
-	}
-	return s;
-}
 
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
@@ -68,13 +60,13 @@ int main(int argc, char* argv[]) {
           if(ret_act != 0) {
 						//create the correct input to the server
 						ih.sendParameters();
-            //cout << "sent" << endl;
 						string reply = ih.readParameters();
-            cout << reply << endl;
+            cout << reply;
+            if(reply[reply.length() - 1] != '\n') {
+              cout << endl;
+            }
             //ANS_END
             mh.recvCode();
-            //cout << "reply " << reply << endl;
-            //reply = ih.translateReply(reply);
 
           } else {
             cout << "Command could not be found" << endl;

@@ -1,10 +1,7 @@
 #ifndef SERVERHANDLER_H
 #define SERVERHANDLER_H
-#include "connection.h"
-#include "connectionclosedexception.h"
 #include "database.h"
 #include "messagehandler.h"
-#include <iostream>
 #include <string>
 #include <vector>
 #include <memory>
@@ -21,7 +18,7 @@ public:
   void createArticle();
   void deleteArticle();
   void getArticle();
-  void setAction(unsigned int a) { action = a; cout << "action:" << action << endl;}
+  void setAction(unsigned int a) { action = a;}
 
 private:
   Database* db;

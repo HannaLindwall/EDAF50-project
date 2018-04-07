@@ -1,16 +1,8 @@
 #include "database1.h"
-#include "article.h"
 #include "newsgroupdoesnotexistexception.h"
 #include "articledoesnotexistexception.h"
 #include "newsgroupalreadyexistexception.h"
-#include <string>
-#include <vector>
 #include <algorithm>
-#include <iterator>
-#include <utility>
-#include <tuple>
-#include <exception>
-#include <iostream>
 using namespace std;
 
 Database1::Database1(){

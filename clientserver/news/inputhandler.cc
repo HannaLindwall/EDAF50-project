@@ -1,15 +1,8 @@
 #include "inputhandler.h"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <utility>
-#include <stdexcept>
+
 #include <sstream>
 
 using namespace std;
-
-//string_p: PAR_STRING N char1 char2 ... charN // N is the number of characters
-//num_p: PAR_NUM N // N is the number
 
 void Inputhandler::enterNG(){
   cout << "Enter name of newsgroup" << endl;
@@ -58,7 +51,6 @@ string Inputhandler::build(string in) {
 
 // COM_END
 void Inputhandler::listNG() {
-  cout << "list" << endl;
   mh.sendCode(Protocol::COM_LIST_NG);
 }
 void Inputhandler::sendString(string in) {
@@ -71,25 +63,21 @@ void Inputhandler::sendInt(unsigned int in) {
 }
 // string_p COM_END
 void Inputhandler::createNG() {
-  cout << "CNG" << endl;
   mh.sendCode(Protocol::COM_CREATE_NG);
   sendString(ng);
 }
 // num_p COM_END
 void Inputhandler::deleteNG() {
-  cout << "DNG" << endl;
   mh.sendCode(Protocol::COM_DELETE_NG);
   sendInt(ngId);
 }
 // num_p COM_END
 void Inputhandler::listArticles() {
-  cout << "listA" << endl;
   mh.sendCode(Protocol::COM_LIST_ART);
   sendInt(ngId);
 }
 // num_p string_p string_p string_p COM_END
 void Inputhandler::createArticle() {
-  cout << "CA" << endl;
   mh.sendCode(Protocol::COM_CREATE_ART);
   //NGId
   sendInt(ngId);
@@ -102,14 +90,12 @@ void Inputhandler::createArticle() {
 }
 //  num_p num_p COM_END
 void Inputhandler::deleteArticle() {
-  cout << "DA" << endl;
   mh.sendCode(Protocol::COM_DELETE_ART);
   sendInt(ngId);
   sendInt(articleId);
 }
 // num_p num_p COM_END
 void Inputhandler::getArticle() {
-  cout << "GA" << ngId << endl;
   mh.sendCode(Protocol::COM_GET_ART);
   sendInt(ngId);
   sendInt(articleId);
@@ -130,6 +116,20 @@ string Inputhandler::readListNG(MessageHandler& mh) {
     output += ngName;
   }
   return output;
+}
+
+string Inputhandler::readText(string op) {
+  string input;
+  istringstream iss(op);
+  unsigned char r;
+  while(iss >> r) {
+    if(r == '_') {
+      input += " ";
+    } else {
+      input += r;
+    }
+  }
+  return input;
 }
 // ANS_CREATE_NG [ANS_ACK | ANS_NAK ERR_NG_ALREADY_EXISTS] ANS_END
 string Inputhandler::readCreateNG(MessageHandler& mh) {
@@ -223,7 +223,10 @@ string Inputhandler::readGetArticle(MessageHandler& mh) {
     for( unsigned int i = 0; i < 3; ++i) {
       output += "\n";
       string op = mh.recvStringParameter();
-      op = readText(op);
+      size_t n = count(op.begin(), op.end(), '_');
+      if(n > 0) {
+        op = readText(op);
+      }
       output += op;
     }
   } else {
@@ -236,19 +239,4 @@ string Inputhandler::readGetArticle(MessageHandler& mh) {
     }
   }
   return output;
-}
-
-///translate
-
-string Inputhandler::readText(string op) {
-  string input;
-  istringstream iss(op);
-  unsigned char r;
-  iss >> r;
-  if(r == '_') {
-    input += " ";
-  } else {
-    input += r;
-  }
-  return input;
 }
